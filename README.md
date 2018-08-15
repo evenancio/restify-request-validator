@@ -42,11 +42,11 @@ server.use(validator.validate.bind(validator));
 Important: if you are using any kind of parser middleware, add this middleware bellow. For example:
 
 ```js
-app.use(restify.plugins.queryParser());
-app.use(restify.plugins.bodyParser());
+server.use(restify.plugins.queryParser());
+server.use(restify.plugins.bodyParser());
 
 const validator = new restifyValidation.RequestValidator();
-app.use(validator.validate.bind(validator));
+server.use(validator.validate.bind(validator));
 ```
 
 By default, on each validation error, the `RequestValidator` will throw an `Error` object with a `500` HTTP code.
