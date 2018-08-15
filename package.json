@@ -44,8 +44,7 @@
     "npm": ">= 3"
   },
   "pre-commit": [
-    "lint",
-    "test"
+    "lint"
   ],
   "nyc": {
     "include": [

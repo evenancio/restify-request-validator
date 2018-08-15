@@ -27,26 +27,29 @@ var RequestValidator = (function () {
         };
     };
     RequestValidator.prototype.validate = function (req, res, next) {
-        if (req.hasOwnProperty('route') && req.route.hasOwnProperty('validation')) {
-            if (req.route.hasOwnProperty('validationMessages')) {
+        if (req.hasOwnProperty('route') && (req.route.hasOwnProperty('validation') || req.route.spec.hasOwnProperty('validation'))) {
+            const route = req.route.hasOwnProperty('validation') ? req.route : req.route.spec;
+            if (route.hasOwnProperty('validationMessages')) {
                 this.customErrorMessages = req.route.validationMessages;
             }
             else {
                 this.customErrorMessages = {};
             }
             var errorMessages = [];
-            if (req.route.validation.hasOwnProperty('url')) {
-                errorMessages = errorMessages.concat(this.validateFields(req.params, req.route.validation.url, true)
+            if (route.validation.hasOwnProperty('url')) {
+                errorMessages = errorMessages.concat(this.validateFields(req.params, route.validation.url, true)
                     .map(function (msg) { return msg.isCustom ? msg.message : "Url: " + msg.message; }));
             }
-            if (req.route.validation.hasOwnProperty('query')) {
-                errorMessages = errorMessages.concat(this.validateFields(req.query, req.route.validation.query, true)
+            if (route.validation.hasOwnProperty('query')) {
+                errorMessages = errorMessages.concat(this.validateFields(req.query, route.validation.query, true)
                     .map(function (msg) { return msg.isCustom ? msg.message : "Query: " + msg.message; }));
             }
-            if (req.route.validation.hasOwnProperty('body')) {
-                errorMessages = errorMessages.concat(this.validateFields(req.params, req.route.validation.body, false)
+            if (route.validation.hasOwnProperty('body')) {
+                const params = Object.keys(req.params).length == 0 ? req.body : req.params;
+                errorMessages = errorMessages.concat(this.validateFields(params, route.validation.body, false)
                     .map(function (msg) { return msg.isCustom ? msg.message : "Body: " + msg.message; }));
             }
+
             if (errorMessages.length) {
                 if (this.failOnFirstError) {
                     next(new this.errorHandler(errorMessages[0]));
