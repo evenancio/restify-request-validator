@@ -1,3 +1,5 @@
+I've just created this fork because the original library was not working on restify 7.2.1. Besides, I wouldn't like to set up my bodyParser to map body to params, so from this version on, this library is able to validate body from either req.body or req.params.
+
 # Restify request validator
 
 [![Build Status](https://travis-ci.org/SSENSE/restify-request-validator.svg?branch=master)](https://travis-ci.org/SSENSE/restify-request-validator)
@@ -36,6 +38,16 @@ var server = restify.createServer();
 var validator = new restifyValidation.RequestValidator();
 server.use(validator.validate.bind(validator));
 ```
+
+Important: if you are using any kind of parser middleware, add this middleware bellow. For example:
+
+```js
+app.use(restify.plugins.queryParser());
+app.use(restify.plugins.bodyParser());
+
+const validator = new restifyValidation.RequestValidator();
+app.use(validator.validate.bind(validator));
+...
 
 By default, on each validation error, the `RequestValidator` will throw an `Error` object with a `500` HTTP code.
 
